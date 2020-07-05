@@ -1,75 +1,60 @@
 // Import stylesheets
 import "./style.css";
 
-// Write Javascript code!
-// const appDiv = document.getElementById('app');
-// appDiv.innerHTML = `<h1>JS Starter</h1>`;
+const getData = function() {
+  console.log("Fetch data from an API.");
+};
 
 /**
- * Function to reverse a string WITHOUT USING an inbuilt JavaScript String
- * "reverse()" function.
- */
-function reverseString1(str) {
+ * Returns a function, that, as long as it continues to be invoked,
+ * will not be triggered.
+ * The function will be called after it stops being called for
+ * "wait" milliseconds.
+ **/
+const debounce = (func, wait) => {
+  let timeout;
   /*
-   * Check for the validity of input string.
-   * If input string is invalid return appropriate message.
+   * This is the function that is returned and will be executed
+   * many times.
+   * We spread (...args) to capture any number of parameters
+   * we want to pass.
    */
-  if (!str || str.length < 2 || typeof str !== "string") {
-    return "Not valid";
-  }
-  /*
-   * Take an empty Array to store string characters in reverse order.
-   */
-  const revArray = [];
-  const length = str.length - 1;
-  /*
-   * Loop string characters in reverse order and store
-   * it in an Array.
-   */
-  for (let i = length; i >= 0; i--) {
-    revArray.push(str[i]);
-  }
-  /*
-   * Join the Array elements to create string in 
-   * reverse order.
-   */
-  return revArray.join("");
-}
+  return function executedFunction(...args) {
+    /*
+     * The callback function to be executed after the debounce
+     * time has elapsed.
+     */
+    const later = () => {
+      /*
+       * Setting "timeout" to "null" to indicate that
+       * Debounce has ended.
+       */
+      timeout = null;
+      /*
+       * Execute callback function.
+       */
+      func(...args);
+    };
+    /*
+     * This will reset the waiting every function execution.
+     * This is the step that prevents the function from
+     * being executed because it will never reach the inside
+     * of the previous "setTimeout".
+     */
+    clearTimeout(timeout);
+    /*
+     * Restart the Debounce waiting period.
+     * "setTimeout" returns a truthy value. It differs in web vs Node.
+     */
+    timeout = setTimeout(later, wait);
+  };
+};
 
-/**
- * Function to reverse a string USING an inbuilt JavaScript String
- * "reverse()" function.
- */
-function reverseString2(str) {
-  return str.split('').reverse().join('');
-}
+const betterFunction = debounce(getData, 300);
 
-/**
- * Function to reverse a string USING an inbuilt JavaScript String 
- * "reverse()" function and "Spread" operator.
- */
-function reverseString3(str) {
-  return [...str].reverse().join('');
-}
-
-function processForm(e) {
-  if (e.preventDefault) e.preventDefault();
-  /*
-   * Perform operations on form submit.
-   */
-  let strSampleString = document.getElementById("idInpSampleString").value;
-  document.getElementById("idSpanReversedString").innerHTML = reverseString1(
-    strSampleString
-  );
-  /*
-   * You must return "false" to prevent the default form behavior.
-   */
-  return false;
-}
-
-var form = document.getElementById("idFormStringReverse");
+var form = document.getElementById("idInpSampleString");
 if (form.attachEvent) {
-  form.attachEvent("submit", processForm);
+  form.attachEvent("keyup", betterFunction);
 } else {
-  form.addEventListener("submit", processForm);
+  form.addEventListener("keyup", betterFunction);
 }
