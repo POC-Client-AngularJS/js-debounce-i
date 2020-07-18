@@ -1,4 +1,6 @@
-// Import stylesheets
+/*
+ * Import stylesheets.
+ */
 import "./style.css";
 
 const getData = function() {
